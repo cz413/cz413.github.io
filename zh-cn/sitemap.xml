@@ -3,7 +3,7 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cz413.github.io.com/</loc>
-    <lastmod>2025-01-17T16:01:43+08:00</lastmod>
+    <lastmod>2025-01-17T16:15:44+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
@@ -21,7 +21,13 @@
                 />
   </url><url>
     <loc>https://cz413.github.io.com/post/</loc>
-    <lastmod>2025-01-17T16:01:43+08:00</lastmod>
+    <lastmod>2025-01-17T16:15:44+08:00</lastmod>
+  </url><url>
+    <loc>https://cz413.github.io.com/p/ssm_study/</loc>
+    <lastmod>2025-01-17T16:15:44+08:00</lastmod>
+  </url><url>
+    <loc>https://cz413.github.io.com/p/docker_study/</loc>
+    <lastmod>2025-01-17T16:14:28+08:00</lastmod>
   </url><url>
     <loc>https://cz413.github.io.com/p/vue3%E9%80%9F%E6%88%90%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2025-01-17T16:01:43+08:00</lastmod>

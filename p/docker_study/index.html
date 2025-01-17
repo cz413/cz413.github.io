@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Docker速通笔记\r1、为什么有Docker\rDocker能帮助加速构建、分享、运行你的应用\n2、Docker架构与容器化\r例：想要从Registry下载redis的方法：\nClient输入命令docker pull redis，命令会被发给Docker Daemon，由Docker Daemon连接上Registry，下载redis到Docker主机中。 Client中输入第二条命令docker run redis（注：这里redis指的是镜像名），命令被发送到Docker主机后，主机会寻找对应镜像名的镜像（如果找不到的话，也会从Registry中自动下载镜像），找到镜像后就会将镜像运行起来 想要构建需要学会的命令：docker build xxx\n">
+<title>Docker_study</title>
+
+<link rel='canonical' href='https://cz413.github.io.com/p/docker_study/'>
+
+<link rel="stylesheet" href="/scss/style.min.b9c8156d464c343bdacaf14a871581fb94cbbdb9dd5cbce4ba017361187cc930.css"><meta property='og:title' content="Docker_study">
+<meta property='og:description' content="Docker速通笔记\r1、为什么有Docker\rDocker能帮助加速构建、分享、运行你的应用\n2、Docker架构与容器化\r例：想要从Registry下载redis的方法：\nClient输入命令docker pull redis，命令会被发给Docker Daemon，由Docker Daemon连接上Registry，下载redis到Docker主机中。 Client中输入第二条命令docker run redis（注：这里redis指的是镜像名），命令被发送到Docker主机后，主机会寻找对应镜像名的镜像（如果找不到的话，也会从Registry中自动下载镜像），找到镜像后就会将镜像运行起来 想要构建需要学会的命令：docker build xxx\n">
+<meta property='og:url' content='https://cz413.github.io.com/p/docker_study/'>
+<meta property='og:site_name' content='cz的博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-01-17T16:14:28&#43;08:00'/><meta property='article:modified_time' content='2025-01-17T16:14:28&#43;08:00'/>
+<meta name="twitter:title" content="Docker_study">
+<meta name="twitter:description" content="Docker速通笔记\r1、为什么有Docker\rDocker能帮助加速构建、分享、运行你的应用\n2、Docker架构与容器化\r例：想要从Registry下载redis的方法：\nClient输入命令docker pull redis，命令会被发给Docker Daemon，由Docker Daemon连接上Registry，下载redis到Docker主机中。 Client中输入第二条命令docker run redis（注：这里redis指的是镜像名），命令被发送到Docker主机后，主机会寻找对应镜像名的镜像（如果找不到的话，也会从Registry中自动下载镜像），找到镜像后就会将镜像运行起来 想要构建需要学会的命令：docker build xxx\n">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu8289397268000124636.jpg" width="300"
+                            height="281" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🍥</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">cz的博客</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/CaiJimmy/hugo-theme-stack'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://twitter.com'
+                        target="_blank"
+                        title="Twitter"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+                    
+                        <li id="i18n-switch">  
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                            <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
+                                
+                                    <option value="https://cz413.github.io.com/en/" >English</option>
+                                
+                                    <option value="https://cz413.github.io.com/" selected>中文</option>
+                                
+                                    <option value="https://cz413.github.io.com/ar/" >عربي</option>
+                                
+                            </select>
+                        </li>
+                    
+                
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1为什么有docker">1、为什么有Docker</a></li>
+    <li><a href="#2docker架构与容器化">2、Docker架构与容器化</a></li>
+    <li><a href="#3安装">3、安装</a></li>
+    <li><a href="#4命令">4、命令</a></li>
+    <li><a href="#5存储">5、存储</a></li>
+    <li><a href="#6网络">6、网络</a>
+      <ol>
+        <li><a href="#61-redis主从同步集群">6.1 Redis主从同步集群</a></li>
+        <li><a href="#62-启动mysql">6.2 启动MySQL</a></li>
+      </ol>
+    </li>
+    <li><a href="#7docker-compose">7、Docker Compose</a>
+      <ol>
+        <li><a href="#71-命令式安装">7.1 命令式安装</a></li>
+        <li><a href="#72-composeyaml">7.2 compose.yaml</a></li>
+      </ol>
+    </li>
+    <li><a href="#8-dockerfile">8、 Dockerfile</a></li>
+    <li><a href="#9附录-一键安装超多中间件">9、附录-一键安装超多中间件</a>
+      <ol>
+        <li><a href="#71-yaml">7.1 yaml</a></li>
+        <li><a href="#72-启动">7.2 启动</a></li>
+        <li><a href="#73-访问">7.3 访问</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/docker_study/">Docker_study</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jan 17, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 8 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="docker速通笔记">Docker速通笔记
+</h1><h2 id="1为什么有docker">1、为什么有Docker
+</h2><p><img src="C:%5cUsers%5c19244%5cDesktop%5cQQ_1721703721282.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="QQ_1721703721282"
+	
+	
+></p>
+<p>Docker能帮助加速构建、分享、运行你的应用</p>
+<h2 id="2docker架构与容器化">2、Docker架构与容器化
+</h2><p><img src="C:%5cUsers%5c19244%5cDesktop%5cQQ_1721703954230.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="QQ_1721703954230"
+	
+	
+></p>
+<blockquote>
+<p>例：想要从Registry下载redis的方法：</p>
+<ul>
+<li>Client输入命令<code>docker pull redis</code>，命令会被发给Docker Daemon，由Docker Daemon连接上Registry，下载redis到Docker主机中。</li>
+<li>Client中输入第二条命令<code>docker run redis</code>（注：这里redis指的是镜像名），命令被发送到Docker主机后，主机会寻找对应镜像名的镜像（如果找不到的话，也会从Registry中自动下载镜像），找到镜像后就会将镜像运行起来</li>
+</ul>
+</blockquote>
+<p>想要构建需要学会的命令：<code>docker build xxx</code></p>
+<p>想要分享需要学会的命令：<code>docker pull xxx</code>，<code>docker push xxx</code></p>
+<p>想要运行需要学会的命令：<code>docker run xxx</code></p>
+<p>到底什么是容器？</p>
+<p><img src="C:%5cUsers%5c19244%5cDesktop%5cQQ_1721704675516.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="QQ_1721704675516"
+	
+	
+></p>
+<blockquote>
+<p>传统的部署情况下会因为某个应用内存泄漏等问题，压缩其他应用的生存空间；而虚拟化部署虽然通过虚拟机将应用之间进行了隔离，但是每一个虚拟机内都有一个独立的操作系统，过于笨重；容器部署就解决了传统部署和虚拟化部署存在的问题——隔离和笨重</p>
+</blockquote>
+<p>容器类似轻量级的VM，共享操作系统内核，拥有自己的文件系统、CPU、内存、进程空间等，互相隔离</p>
+<p>优点：轻量、快速、隔离、跨平台、高密度等</p>
+<h2 id="3安装">3、安装
+</h2><p>国内常见云平台：</p>
+<ul>
+<li><a class="link" href="https://promotion.aliyun.com/ntms/act/ambassador/sharetouser.html?userCode=50sid5bu&amp;utm_source=50sid5bu"  target="_blank" rel="noopener"
+    >阿里云</a>、<a class="link" href="https://curl.qcloud.com/iyFTRSJb"  target="_blank" rel="noopener"
+    >腾讯云</a>、<a class="link" href="https://activity.huaweicloud.com/discount_area_v5/index.html?fromacct=d1a6f32e-d6d0-4702-9213-eafe022a0708&amp;utm_source=bGVpZmVuZ3lhbmc==&amp;utm_medium=cps&amp;utm_campaign=201905"  target="_blank" rel="noopener"
+    >华为云</a>、<a class="link" href="https://www.qingcloud.com/"  target="_blank" rel="noopener"
+    >青云</a>&hellip;&hellip;</li>
+</ul>
+<p>使用 CentOS 7.9</p>
+<p>WindTerm下载：https://github.com/kingToolbox/WindTerm/releases/download/2.6.0/WindTerm_2.6.1_Windows_Portable_x86_64.zip</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 移除旧版本docker</span>
+</span></span><span class="line"><span class="cl">sudo yum remove docker <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>                  docker-client <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>                  docker-client-latest <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>                  docker-common <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>                  docker-latest <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>                  docker-latest-logrotate <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>                  docker-logrotate <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>                  docker-engine
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 配置docker yum源。</span>
+</span></span><span class="line"><span class="cl">sudo yum install -y yum-utils
+</span></span><span class="line"><span class="cl">sudo yum-config-manager <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--add-repo <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 安装 最新 docker</span>
+</span></span><span class="line"><span class="cl">sudo yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 启动&amp; 开机启动docker； enable + start 二合一</span>
+</span></span><span class="line"><span class="cl">systemctl <span class="nb">enable</span> docker --now
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 配置加速</span>
+</span></span><span class="line"><span class="cl">sudo mkdir -p /etc/docker
+</span></span><span class="line"><span class="cl">sudo tee /etc/docker/daemon.json <span class="s">&lt;&lt;-&#39;EOF&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">{
+</span></span></span><span class="line"><span class="cl"><span class="s">  &#34;registry-mirrors&#34;: [&#34;https://82m9ar63.mirror.aliyuncs.com&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">}
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">sudo systemctl daemon-reload
+</span></span><span class="line"><span class="cl">sudo systemctl restart docker
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>注意：使用的如果是openEuler的话，可能会出现报错Error: 为仓库 &lsquo;docker-ce-stable&rsquo; 下载元数据失败 : Cannot download repomd.xml: Cannot download repodata/repomd.xml: All mirrors were tried</p>
+<p>因为查看docker库中只有centos/7/  或 centos/8/ 的目录，所以我们进入到/etc/yum.repos.d/docker-ce.repo，去修改下载的url（即从baseurl=https://download.docker.com/linux/centos/$releasever/$basearch/stable中，修改$releasever为openEuler对应centOs的版本，22.03对应cenOs7，就改为7）</p>
+</blockquote>
+<h2 id="4命令">4、命令
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">#查看运行中的容器</span>
+</span></span><span class="line"><span class="cl">docker ps
+</span></span><span class="line"><span class="cl"><span class="c1">#查看所有容器</span>
+</span></span><span class="line"><span class="cl">docker ps -a
+</span></span><span class="line"><span class="cl"><span class="c1">#搜索镜像</span>
+</span></span><span class="line"><span class="cl">docker search nginx
+</span></span><span class="line"><span class="cl"><span class="c1">#下载镜像</span>
+</span></span><span class="line"><span class="cl">docker pull nginx
+</span></span><span class="line"><span class="cl"><span class="c1">#下载指定版本镜像</span>
+</span></span><span class="line"><span class="cl">docker pull nginx:1.26.0
+</span></span><span class="line"><span class="cl"><span class="c1">#查看所有镜像</span>
+</span></span><span class="line"><span class="cl">docker images
+</span></span><span class="line"><span class="cl"><span class="c1">#删除指定id的镜像</span>
+</span></span><span class="line"><span class="cl">docker rmi e784f4560448
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#运行一个新容器</span>
+</span></span><span class="line"><span class="cl">docker run nginx
+</span></span><span class="line"><span class="cl"><span class="c1">#停止容器</span>
+</span></span><span class="line"><span class="cl">docker stop keen_blackwell
+</span></span><span class="line"><span class="cl"><span class="c1">#启动容器</span>
+</span></span><span class="line"><span class="cl">docker start <span class="m">592</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#重启容器</span>
+</span></span><span class="line"><span class="cl">docker restart <span class="m">592</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#查看容器资源占用情况</span>
+</span></span><span class="line"><span class="cl">docker stats <span class="m">592</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#查看容器日志</span>
+</span></span><span class="line"><span class="cl">docker logs <span class="m">592</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#删除指定容器</span>
+</span></span><span class="line"><span class="cl">docker rm <span class="m">592</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#强制删除指定容器</span>
+</span></span><span class="line"><span class="cl">docker rm -f <span class="m">592</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 后台启动容器</span>
+</span></span><span class="line"><span class="cl">docker run -d --name mynginx nginx
+</span></span><span class="line"><span class="cl"><span class="c1"># 后台启动并暴露端口</span>
+</span></span><span class="line"><span class="cl">docker run -d --name mynginx -p 80:80 nginx
+</span></span><span class="line"><span class="cl"><span class="c1"># 进入容器内部</span>
+</span></span><span class="line"><span class="cl">docker <span class="nb">exec</span> -it mynginx /bin/bash
+</span></span><span class="line"><span class="cl"><span class="c1"># 退出容器</span>
+</span></span><span class="line"><span class="cl"><span class="nb">exit</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 提交容器变化打成一个新的镜像</span>
+</span></span><span class="line"><span class="cl">docker commit -m <span class="s2">&#34;update index.html&#34;</span> mynginx mynginx:v1.0
+</span></span><span class="line"><span class="cl"><span class="c1"># 保存镜像为指定文件</span>
+</span></span><span class="line"><span class="cl">docker save -o mynginx.tar mynginx:v1.0
+</span></span><span class="line"><span class="cl"><span class="c1"># 删除多个镜像</span>
+</span></span><span class="line"><span class="cl">docker rmi bde7d154a67f 94543a6c1aef e784f4560448
+</span></span><span class="line"><span class="cl"><span class="c1"># 加载镜像</span>
+</span></span><span class="line"><span class="cl">docker load -i mynginx.tar 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 登录 docker hub</span>
+</span></span><span class="line"><span class="cl">docker login
+</span></span><span class="line"><span class="cl"><span class="c1"># 重新给镜像打标签</span>
+</span></span><span class="line"><span class="cl">docker tag mynginx:v1.0 leifengyang/mynginx:v1.0
+</span></span><span class="line"><span class="cl"><span class="c1"># 推送镜像</span>
+</span></span><span class="line"><span class="cl">docker push leifengyang/mynginx:v1.0
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>注意：使用docker运行nginx的时候，在没有配置端口映射的时候是无法访问到nginx的欢迎页面的，因为nginx这个时候运行在容器中，即相当于运行在一个小型的linux系统中，除非访问的是这个linux系统的ip，否则是访问不到页面的。这个时候就需要进行端口映射，将本机的端口映射到容器上，来通过本机的地址访问页面</p>
+</blockquote>
+<h2 id="5存储">5、存储
+</h2><p>两种方式，注意区分：</p>
+<ul>
+<li>目录挂载： <code>-v /app/nghtml:/usr/share/nginx/html</code></li>
+<li>卷映射：<code>-v ngconf:/etc/nginx</code></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">docker run -d -p 99:80 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v /app/nghtml:/usr/share/nginx/html <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v ngconf:/etc/nginx <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--name app03 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>nginx
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>补充：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1">#删除当前正在运行的所有的容器</span>
+</span></span><span class="line"><span class="cl">docker rm -f <span class="k">$(</span>docker ps -aq<span class="k">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="6网络">6、网络
+</h2><p>创建自定义网络，实现主机名作为稳定域名访问</p>
+<p><img src="C:%5cUsers%5c19244%5cDesktop%5cQQ_1722087732708.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="QQ_1722087732708"
+	
+	
+></p>
+<blockquote>
+<p>docker会为每个容器分配唯一ip，使用容器ip+容器端口可以互相访问</p>
+<p>缺点：ip由于各种原因可能会变化，不稳定</p>
+</blockquote>
+<p>为了解决上述的问题，docker提供了一种自定义网络的形式（docker0默认不支持主机域名）==创建自定义网络，容器名就是稳定域名==</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1">#查看容器的细节</span>
+</span></span><span class="line"><span class="cl">docker container inspect app1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="61-redis主从同步集群">6.1 Redis主从同步集群
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1">#自定义网络</span>
+</span></span><span class="line"><span class="cl">docker network create mynet
+</span></span><span class="line"><span class="cl"><span class="c1">#主节点</span>
+</span></span><span class="line"><span class="cl">docker run -d -p 6379:6379 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v /app/rd1:/bitnami/redis/data <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">REDIS_REPLICATION_MODE</span><span class="o">=</span>master <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">REDIS_PASSWORD</span><span class="o">=</span><span class="m">123456</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--network mynet --name redis01 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>bitnami/redis
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#从节点</span>
+</span></span><span class="line"><span class="cl">docker run -d -p 6380:6379 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v /app/rd2:/bitnami/redis/data <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">REDIS_REPLICATION_MODE</span><span class="o">=</span>slave <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">REDIS_MASTER_HOST</span><span class="o">=</span>redis01 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">REDIS_MASTER_PORT_NUMBER</span><span class="o">=</span><span class="m">6379</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">REDIS_MASTER_PASSWORD</span><span class="o">=</span><span class="m">123456</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">REDIS_PASSWORD</span><span class="o">=</span><span class="m">123456</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--network mynet --name redis02 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>bitnami/redis
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="62-启动mysql">6.2 启动MySQL
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">docker run -d -p 3306:3306 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v /app/myconf:/etc/mysql/conf.d <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v /app/mydata:/var/lib/mysql <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">MYSQL_ROOT_PASSWORD</span><span class="o">=</span><span class="m">123456</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>mysql:8.0.37-debian
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="7docker-compose">7、Docker Compose
+</h2><p><img src="C:%5cUsers%5c19244%5cDesktop%5cQQ_1722089652671.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="QQ_1722089652671"
+	
+	
+></p>
+<ul>
+<li>上线：指第一次启动，之前从来没有启动过</li>
+<li>启动：指之前启动过，然后停止了容器运行，现在再次启动</li>
+<li>扩容：指增加运行的容器的份数，如上图中的示例，使得x2容器一共启动了3份</li>
+</ul>
+<h3 id="71-命令式安装">7.1 命令式安装
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1">#创建网络</span>
+</span></span><span class="line"><span class="cl">docker network create blog
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#启动mysql</span>
+</span></span><span class="line"><span class="cl">docker run -d -p 3306:3306 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">MYSQL_ROOT_PASSWORD</span><span class="o">=</span><span class="m">123456</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">MYSQL_DATABASE</span><span class="o">=</span>wordpress <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v mysql-data:/var/lib/mysql <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v /app/myconf:/etc/mysql/conf.d <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--restart always --name mysql <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--network blog <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>mysql:8.0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#启动wordpress</span>
+</span></span><span class="line"><span class="cl">docker run -d -p 8080:80 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">WORDPRESS_DB_HOST</span><span class="o">=</span>mysql <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">WORDPRESS_DB_USER</span><span class="o">=</span>root <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">WORDPRESS_DB_PASSWORD</span><span class="o">=</span><span class="m">123456</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-e <span class="nv">WORDPRESS_DB_NAME</span><span class="o">=</span>wordpress <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>-v wordpress:/var/www/html <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--restart always --name wordpress-app <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--network blog <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>wordpress:latest
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="72-composeyaml">7.2 compose.yaml
+</h3><p><img src="C:%5cUsers%5c19244%5cAppData%5cLocal%5cTemp%5cQQ_1722091083773.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="QQ_1722091083773"
+	
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">myblog</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">services</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">mysql</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l">mysql</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">mysql:8.0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="s2">&#34;3306:3306&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">MYSQL_ROOT_PASSWORD=123456</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">MYSQL_DATABASE=wordpress</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">mysql-data:/var/lib/mysql</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">/app/myconf:/etc/mysql/conf.d</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">always</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">networks</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">blog</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">wordpress</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">wordpress</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="s2">&#34;8080:80&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">WORDPRESS_DB_HOST</span><span class="p">:</span><span class="w"> </span><span class="l">mysql</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">WORDPRESS_DB_USER</span><span class="p">:</span><span class="w"> </span><span class="l">root</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">WORDPRESS_DB_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="m">123456</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">WORDPRESS_DB_NAME</span><span class="p">:</span><span class="w"> </span><span class="l">wordpress</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">wordpress:/var/www/html</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">always</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">networks</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">blog</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">mysql</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">mysql-data</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">wordpress</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">networks</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">blog</span><span class="p">:</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="8-dockerfile">8、 Dockerfile
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">FROM openjdk:17
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">LABEL <span class="nv">author</span><span class="o">=</span>leifengyang
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">COPY app.jar /app.jar
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">EXPOSE <span class="m">8080</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ENTRYPOINT <span class="o">[</span><span class="s2">&#34;java&#34;</span>,<span class="s2">&#34;-jar&#34;</span>,<span class="s2">&#34;/app.jar&#34;</span><span class="o">]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="9附录-一键安装超多中间件">9、附录-一键安装超多中间件
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1">#Disable memory paging and swapping performance</span>
+</span></span><span class="line"><span class="cl">sudo swapoff -a
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Edit the sysctl config file</span>
+</span></span><span class="line"><span class="cl">sudo vi /etc/sysctl.conf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Add a line to define the desired value</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># or change the value if the key exists,</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># and then save your changes.</span>
+</span></span><span class="line"><span class="cl">vm.max_map_count<span class="o">=</span><span class="m">262144</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Reload the kernel parameters using sysctl</span>
+</span></span><span class="line"><span class="cl">sudo sysctl -p
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Verify that the change was applied by checking the value</span>
+</span></span><span class="line"><span class="cl">cat /proc/sys/vm/max_map_count
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="71-yaml">7.1 yaml
+</h3><blockquote>
+<p>注意：</p>
+<ul>
+<li>将下面文件中 <code>kafka</code> 的  <code>119.45.147.122</code> 改为你自己的服务器IP。</li>
+<li>所有容器都做了时间同步，这样容器的时间和linux主机的时间就一致了</li>
+</ul>
+<p>准备一个 <code>compose.yaml</code>文件，内容如下：</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span><span class="lnt">157
+</span><span class="lnt">158
+</span><span class="lnt">159
+</span><span class="lnt">160
+</span><span class="lnt">161
+</span><span class="lnt">162
+</span><span class="lnt">163
+</span><span class="lnt">164
+</span><span class="lnt">165
+</span><span class="lnt">166
+</span><span class="lnt">167
+</span><span class="lnt">168
+</span><span class="lnt">169
+</span><span class="lnt">170
+</span><span class="lnt">171
+</span><span class="lnt">172
+</span><span class="lnt">173
+</span><span class="lnt">174
+</span><span class="lnt">175
+</span><span class="lnt">176
+</span><span class="lnt">177
+</span><span class="lnt">178
+</span><span class="lnt">179
+</span><span class="lnt">180
+</span><span class="lnt">181
+</span><span class="lnt">182
+</span><span class="lnt">183
+</span><span class="lnt">184
+</span><span class="lnt">185
+</span><span class="lnt">186
+</span><span class="lnt">187
+</span><span class="lnt">188
+</span><span class="lnt">189
+</span><span class="lnt">190
+</span><span class="lnt">191
+</span><span class="lnt">192
+</span><span class="lnt">193
+</span><span class="lnt">194
+</span><span class="lnt">195
+</span><span class="lnt">196
+</span><span class="lnt">197
+</span><span class="lnt">198
+</span><span class="lnt">199
+</span><span class="lnt">200
+</span><span class="lnt">201
+</span><span class="lnt">202
+</span><span class="lnt">203
+</span><span class="lnt">204
+</span><span class="lnt">205
+</span><span class="lnt">206
+</span><span class="lnt">207
+</span><span class="lnt">208
+</span><span class="lnt">209
+</span><span class="lnt">210
+</span><span class="lnt">211
+</span><span class="lnt">212
+</span><span class="lnt">213
+</span><span class="lnt">214
+</span><span class="lnt">215
+</span><span class="lnt">216
+</span><span class="lnt">217
+</span><span class="lnt">218
+</span><span class="lnt">219
+</span><span class="lnt">220
+</span><span class="lnt">221
+</span><span class="lnt">222
+</span><span class="lnt">223
+</span><span class="lnt">224
+</span><span class="lnt">225
+</span><span class="lnt">226
+</span><span class="lnt">227
+</span><span class="lnt">228
+</span><span class="lnt">229
+</span><span class="lnt">230
+</span><span class="lnt">231
+</span><span class="lnt">232
+</span><span class="lnt">233
+</span><span class="lnt">234
+</span><span class="lnt">235
+</span><span class="lnt">236
+</span><span class="lnt">237
+</span><span class="lnt">238
+</span><span class="lnt">239
+</span><span class="lnt">240
+</span><span class="lnt">241
+</span><span class="lnt">242
+</span><span class="lnt">243
+</span><span class="lnt">244
+</span><span class="lnt">245
+</span><span class="lnt">246
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">name: devsoft
+</span></span><span class="line"><span class="cl">services:
+</span></span><span class="line"><span class="cl">  redis:
+</span></span><span class="line"><span class="cl">    image: bitnami/redis:latest
+</span></span><span class="line"><span class="cl">    restart: always
+</span></span><span class="line"><span class="cl">    container_name: redis
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      - <span class="nv">REDIS_PASSWORD</span><span class="o">=</span><span class="m">123456</span>
+</span></span><span class="line"><span class="cl">    ports:
+</span></span><span class="line"><span class="cl">      - <span class="s1">&#39;6379:6379&#39;</span>
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">      - redis-data:/bitnami/redis/data
+</span></span><span class="line"><span class="cl">      - redis-conf:/opt/bitnami/redis/mounted-etc
+</span></span><span class="line"><span class="cl">      - /etc/localtime:/etc/localtime:ro
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  mysql:
+</span></span><span class="line"><span class="cl">    image: mysql:8.0.31
+</span></span><span class="line"><span class="cl">    restart: always
+</span></span><span class="line"><span class="cl">    container_name: mysql
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      - <span class="nv">MYSQL_ROOT_PASSWORD</span><span class="o">=</span><span class="m">123456</span>
+</span></span><span class="line"><span class="cl">    ports:
+</span></span><span class="line"><span class="cl">      - <span class="s1">&#39;3306:3306&#39;</span>
+</span></span><span class="line"><span class="cl">      - <span class="s1">&#39;33060:33060&#39;</span>
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">      - mysql-conf:/etc/mysql/conf.d
+</span></span><span class="line"><span class="cl">      - mysql-data:/var/lib/mysql
+</span></span><span class="line"><span class="cl">      - /etc/localtime:/etc/localtime:ro
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  rabbit:
+</span></span><span class="line"><span class="cl">    image: rabbitmq:3-management
+</span></span><span class="line"><span class="cl">    restart: always
+</span></span><span class="line"><span class="cl">    container_name: rabbitmq
+</span></span><span class="line"><span class="cl">    ports:
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;5672:5672&#34;</span>
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;15672:15672&#34;</span>
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      - <span class="nv">RABBITMQ_DEFAULT_USER</span><span class="o">=</span>rabbit
+</span></span><span class="line"><span class="cl">      - <span class="nv">RABBITMQ_DEFAULT_PASS</span><span class="o">=</span>rabbit
+</span></span><span class="line"><span class="cl">      - <span class="nv">RABBITMQ_DEFAULT_VHOST</span><span class="o">=</span>dev
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">      - rabbit-data:/var/lib/rabbitmq
+</span></span><span class="line"><span class="cl">      - rabbit-app:/etc/rabbitmq
+</span></span><span class="line"><span class="cl">      - /etc/localtime:/etc/localtime:ro
+</span></span><span class="line"><span class="cl">  opensearch-node1:
+</span></span><span class="line"><span class="cl">    image: opensearchproject/opensearch:2.13.0
+</span></span><span class="line"><span class="cl">    container_name: opensearch-node1
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      - cluster.name<span class="o">=</span>opensearch-cluster <span class="c1"># Name the cluster</span>
+</span></span><span class="line"><span class="cl">      - node.name<span class="o">=</span>opensearch-node1 <span class="c1"># Name the node that will run in this container</span>
+</span></span><span class="line"><span class="cl">      - discovery.seed_hosts<span class="o">=</span>opensearch-node1,opensearch-node2 <span class="c1"># Nodes to look for when discovering the cluster</span>
+</span></span><span class="line"><span class="cl">      - cluster.initial_cluster_manager_nodes<span class="o">=</span>opensearch-node1,opensearch-node2 <span class="c1"># Nodes eligibile to serve as cluster manager</span>
+</span></span><span class="line"><span class="cl">      - bootstrap.memory_lock<span class="o">=</span><span class="nb">true</span> <span class="c1"># Disable JVM heap memory swapping</span>
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m&#34;</span> <span class="c1"># Set min and max JVM heap sizes to at least 50% of system RAM</span>
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;DISABLE_INSTALL_DEMO_CONFIG=true&#34;</span> <span class="c1"># Prevents execution of bundled demo script which installs demo certificates and security configurations to OpenSearch</span>
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;DISABLE_SECURITY_PLUGIN=true&#34;</span> <span class="c1"># Disables Security plugin</span>
+</span></span><span class="line"><span class="cl">    ulimits:
+</span></span><span class="line"><span class="cl">      memlock:
+</span></span><span class="line"><span class="cl">        soft: -1 <span class="c1"># Set memlock to unlimited (no soft or hard limit)</span>
+</span></span><span class="line"><span class="cl">        hard: -1
+</span></span><span class="line"><span class="cl">      nofile:
+</span></span><span class="line"><span class="cl">        soft: <span class="m">65536</span> <span class="c1"># Maximum number of open files for the opensearch user - set to at least 65536</span>
+</span></span><span class="line"><span class="cl">        hard: <span class="m">65536</span>
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">      - opensearch-data1:/usr/share/opensearch/data <span class="c1"># Creates volume called opensearch-data1 and mounts it to the container</span>
+</span></span><span class="line"><span class="cl">      - /etc/localtime:/etc/localtime:ro
+</span></span><span class="line"><span class="cl">    ports:
+</span></span><span class="line"><span class="cl">      - 9200:9200 <span class="c1"># REST API</span>
+</span></span><span class="line"><span class="cl">      - 9600:9600 <span class="c1"># Performance Analyzer</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  opensearch-node2:
+</span></span><span class="line"><span class="cl">    image: opensearchproject/opensearch:2.13.0
+</span></span><span class="line"><span class="cl">    container_name: opensearch-node2
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      - cluster.name<span class="o">=</span>opensearch-cluster <span class="c1"># Name the cluster</span>
+</span></span><span class="line"><span class="cl">      - node.name<span class="o">=</span>opensearch-node2 <span class="c1"># Name the node that will run in this container</span>
+</span></span><span class="line"><span class="cl">      - discovery.seed_hosts<span class="o">=</span>opensearch-node1,opensearch-node2 <span class="c1"># Nodes to look for when discovering the cluster</span>
+</span></span><span class="line"><span class="cl">      - cluster.initial_cluster_manager_nodes<span class="o">=</span>opensearch-node1,opensearch-node2 <span class="c1"># Nodes eligibile to serve as cluster manager</span>
+</span></span><span class="line"><span class="cl">      - bootstrap.memory_lock<span class="o">=</span><span class="nb">true</span> <span class="c1"># Disable JVM heap memory swapping</span>
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m&#34;</span> <span class="c1"># Set min and max JVM heap sizes to at least 50% of system RAM</span>
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;DISABLE_INSTALL_DEMO_CONFIG=true&#34;</span> <span class="c1"># Prevents execution of bundled demo script which installs demo certificates and security configurations to OpenSearch</span>
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;DISABLE_SECURITY_PLUGIN=true&#34;</span> <span class="c1"># Disables Security plugin</span>
+</span></span><span class="line"><span class="cl">    ulimits:
+</span></span><span class="line"><span class="cl">      memlock:
+</span></span><span class="line"><span class="cl">        soft: -1 <span class="c1"># Set memlock to unlimited (no soft or hard limit)</span>
+</span></span><span class="line"><span class="cl">        hard: -1
+</span></span><span class="line"><span class="cl">      nofile:
+</span></span><span class="line"><span class="cl">        soft: <span class="m">65536</span> <span class="c1"># Maximum number of open files for the opensearch user - set to at least 65536</span>
+</span></span><span class="line"><span class="cl">        hard: <span class="m">65536</span>
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">      - /etc/localtime:/etc/localtime:ro
+</span></span><span class="line"><span class="cl">      - opensearch-data2:/usr/share/opensearch/data <span class="c1"># Creates volume called opensearch-data2 and mounts it to the container</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  opensearch-dashboards:
+</span></span><span class="line"><span class="cl">    image: opensearchproject/opensearch-dashboards:2.13.0
+</span></span><span class="line"><span class="cl">    container_name: opensearch-dashboards
+</span></span><span class="line"><span class="cl">    ports:
+</span></span><span class="line"><span class="cl">      - 5601:5601 <span class="c1"># Map host port 5601 to container port 5601</span>
+</span></span><span class="line"><span class="cl">    expose:
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;5601&#34;</span> <span class="c1"># Expose port 5601 for web access to OpenSearch Dashboards</span>
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      - <span class="s1">&#39;OPENSEARCH_HOSTS=[&#34;http://opensearch-node1:9200&#34;,&#34;http://opensearch-node2:9200&#34;]&#39;</span>
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;DISABLE_SECURITY_DASHBOARDS_PLUGIN=true&#34;</span> <span class="c1"># disables security dashboards plugin in OpenSearch Dashboards</span>
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">      - /etc/localtime:/etc/localtime:ro
+</span></span><span class="line"><span class="cl">  zookeeper:
+</span></span><span class="line"><span class="cl">    image: bitnami/zookeeper:3.9
+</span></span><span class="line"><span class="cl">    container_name: zookeeper
+</span></span><span class="line"><span class="cl">    restart: always
+</span></span><span class="line"><span class="cl">    ports:
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;2181:2181&#34;</span>
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;zookeeper_data:/bitnami&#34;</span>
+</span></span><span class="line"><span class="cl">      - /etc/localtime:/etc/localtime:ro
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      - <span class="nv">ALLOW_ANONYMOUS_LOGIN</span><span class="o">=</span>yes
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  kafka:
+</span></span><span class="line"><span class="cl">    image: <span class="s1">&#39;bitnami/kafka:3.4&#39;</span>
+</span></span><span class="line"><span class="cl">    container_name: kafka
+</span></span><span class="line"><span class="cl">    restart: always
+</span></span><span class="line"><span class="cl">    hostname: kafka
+</span></span><span class="line"><span class="cl">    ports:
+</span></span><span class="line"><span class="cl">      - <span class="s1">&#39;9092:9092&#39;</span>
+</span></span><span class="line"><span class="cl">      - <span class="s1">&#39;9094:9094&#39;</span>
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      - <span class="nv">KAFKA_CFG_NODE_ID</span><span class="o">=</span><span class="m">0</span>
+</span></span><span class="line"><span class="cl">      - <span class="nv">KAFKA_CFG_PROCESS_ROLES</span><span class="o">=</span>controller,broker
+</span></span><span class="line"><span class="cl">      - <span class="nv">KAFKA_CFG_LISTENERS</span><span class="o">=</span>PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://0.0.0.0:9094
+</span></span><span class="line"><span class="cl">      - <span class="nv">KAFKA_CFG_ADVERTISED_LISTENERS</span><span class="o">=</span>PLAINTEXT://kafka:9092,EXTERNAL://119.45.147.122:9094
+</span></span><span class="line"><span class="cl">      - <span class="nv">KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP</span><span class="o">=</span>CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+</span></span><span class="line"><span class="cl">      - <span class="nv">KAFKA_CFG_CONTROLLER_QUORUM_VOTERS</span><span class="o">=</span>0@kafka:9093
+</span></span><span class="line"><span class="cl">      - <span class="nv">KAFKA_CFG_CONTROLLER_LISTENER_NAMES</span><span class="o">=</span>CONTROLLER
+</span></span><span class="line"><span class="cl">      - <span class="nv">ALLOW_PLAINTEXT_LISTENER</span><span class="o">=</span>yes
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;KAFKA_HEAP_OPTS=-Xmx512m -Xms512m&#34;</span>
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">      - kafka-conf:/bitnami/kafka/config
+</span></span><span class="line"><span class="cl">      - kafka-data:/bitnami/kafka/data
+</span></span><span class="line"><span class="cl">      - /etc/localtime:/etc/localtime:ro
+</span></span><span class="line"><span class="cl">  kafka-ui:
+</span></span><span class="line"><span class="cl">    container_name: kafka-ui
+</span></span><span class="line"><span class="cl">    image: provectuslabs/kafka-ui:latest
+</span></span><span class="line"><span class="cl">    restart: always
+</span></span><span class="line"><span class="cl">    ports:
+</span></span><span class="line"><span class="cl">      - 8080:8080
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      DYNAMIC_CONFIG_ENABLED: <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">      KAFKA_CLUSTERS_0_NAME: kafka-dev
+</span></span><span class="line"><span class="cl">      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">      - kafkaui-app:/etc/kafkaui
+</span></span><span class="line"><span class="cl">      - /etc/localtime:/etc/localtime:ro
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  nacos:
+</span></span><span class="line"><span class="cl">    image: nacos/nacos-server:v2.3.1
+</span></span><span class="line"><span class="cl">    container_name: nacos
+</span></span><span class="line"><span class="cl">    ports:
+</span></span><span class="line"><span class="cl">      - 8848:8848
+</span></span><span class="line"><span class="cl">      - 9848:9848
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      - <span class="nv">PREFER_HOST_MODE</span><span class="o">=</span>hostname
+</span></span><span class="line"><span class="cl">      - <span class="nv">MODE</span><span class="o">=</span>standalone
+</span></span><span class="line"><span class="cl">      - <span class="nv">JVM_XMX</span><span class="o">=</span>512m
+</span></span><span class="line"><span class="cl">      - <span class="nv">JVM_XMS</span><span class="o">=</span>512m
+</span></span><span class="line"><span class="cl">      - <span class="nv">SPRING_DATASOURCE_PLATFORM</span><span class="o">=</span>mysql
+</span></span><span class="line"><span class="cl">      - <span class="nv">MYSQL_SERVICE_HOST</span><span class="o">=</span>nacos-mysql
+</span></span><span class="line"><span class="cl">      - <span class="nv">MYSQL_SERVICE_DB_NAME</span><span class="o">=</span>nacos_devtest
+</span></span><span class="line"><span class="cl">      - <span class="nv">MYSQL_SERVICE_PORT</span><span class="o">=</span><span class="m">3306</span>
+</span></span><span class="line"><span class="cl">      - <span class="nv">MYSQL_SERVICE_USER</span><span class="o">=</span>nacos
+</span></span><span class="line"><span class="cl">      - <span class="nv">MYSQL_SERVICE_PASSWORD</span><span class="o">=</span>nacos
+</span></span><span class="line"><span class="cl">      - <span class="nv">MYSQL_SERVICE_DB_PARAM</span><span class="o">=</span><span class="nv">characterEncoding</span><span class="o">=</span>utf8<span class="p">&amp;</span><span class="nv">connectTimeout</span><span class="o">=</span>1000<span class="p">&amp;</span><span class="nv">socketTimeout</span><span class="o">=</span>3000<span class="p">&amp;</span><span class="nv">autoReconnect</span><span class="o">=</span>true<span class="p">&amp;</span><span class="nv">useUnicode</span><span class="o">=</span>true<span class="p">&amp;</span><span class="nv">useSSL</span><span class="o">=</span>false<span class="p">&amp;</span><span class="nv">serverTimezone</span><span class="o">=</span>Asia/Shanghai<span class="p">&amp;</span><span class="nv">allowPublicKeyRetrieval</span><span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">      - <span class="nv">NACOS_AUTH_IDENTITY_KEY</span><span class="o">=</span><span class="m">2222</span>
+</span></span><span class="line"><span class="cl">      - <span class="nv">NACOS_AUTH_IDENTITY_VALUE</span><span class="o">=</span>2xxx
+</span></span><span class="line"><span class="cl">      - <span class="nv">NACOS_AUTH_TOKEN</span><span class="o">=</span>SecretKey012345678901234567890123456789012345678901234567890123456789
+</span></span><span class="line"><span class="cl">      - <span class="nv">NACOS_AUTH_ENABLE</span><span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">      - /app/nacos/standalone-logs/:/home/nacos/logs
+</span></span><span class="line"><span class="cl">      - /etc/localtime:/etc/localtime:ro
+</span></span><span class="line"><span class="cl">    depends_on:
+</span></span><span class="line"><span class="cl">      nacos-mysql:
+</span></span><span class="line"><span class="cl">        condition: service_healthy
+</span></span><span class="line"><span class="cl">  nacos-mysql:
+</span></span><span class="line"><span class="cl">    container_name: nacos-mysql
+</span></span><span class="line"><span class="cl">    build:
+</span></span><span class="line"><span class="cl">      context: .
+</span></span><span class="line"><span class="cl">      dockerfile_inline: <span class="p">|</span>
+</span></span><span class="line"><span class="cl">        FROM mysql:8.0.31
+</span></span><span class="line"><span class="cl">        ADD https://raw.githubusercontent.com/alibaba/nacos/2.3.2/distribution/conf/mysql-schema.sql /docker-entrypoint-initdb.d/nacos-mysql.sql
+</span></span><span class="line"><span class="cl">        RUN chown -R mysql:mysql /docker-entrypoint-initdb.d/nacos-mysql.sql
+</span></span><span class="line"><span class="cl">        EXPOSE <span class="m">3306</span>
+</span></span><span class="line"><span class="cl">        CMD <span class="o">[</span><span class="s2">&#34;mysqld&#34;</span>, <span class="s2">&#34;--character-set-server=utf8mb4&#34;</span>, <span class="s2">&#34;--collation-server=utf8mb4_unicode_ci&#34;</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">    image: nacos/mysql:8.0.30
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      - <span class="nv">MYSQL_ROOT_PASSWORD</span><span class="o">=</span>root
+</span></span><span class="line"><span class="cl">      - <span class="nv">MYSQL_DATABASE</span><span class="o">=</span>nacos_devtest
+</span></span><span class="line"><span class="cl">      - <span class="nv">MYSQL_USER</span><span class="o">=</span>nacos
+</span></span><span class="line"><span class="cl">      - <span class="nv">MYSQL_PASSWORD</span><span class="o">=</span>nacos
+</span></span><span class="line"><span class="cl">      - <span class="nv">LANG</span><span class="o">=</span>C.UTF-8
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">      - nacos-mysqldata:/var/lib/mysql
+</span></span><span class="line"><span class="cl">      - /etc/localtime:/etc/localtime:ro
+</span></span><span class="line"><span class="cl">    ports:
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;13306:3306&#34;</span>
+</span></span><span class="line"><span class="cl">    healthcheck:
+</span></span><span class="line"><span class="cl">      test: <span class="o">[</span> <span class="s2">&#34;CMD&#34;</span>, <span class="s2">&#34;mysqladmin&#34;</span> ,<span class="s2">&#34;ping&#34;</span>, <span class="s2">&#34;-h&#34;</span>, <span class="s2">&#34;localhost&#34;</span> <span class="o">]</span>
+</span></span><span class="line"><span class="cl">      interval: 5s
+</span></span><span class="line"><span class="cl">      timeout: 10s
+</span></span><span class="line"><span class="cl">      retries: <span class="m">10</span>
+</span></span><span class="line"><span class="cl">  prometheus:
+</span></span><span class="line"><span class="cl">    image: prom/prometheus:v2.52.0
+</span></span><span class="line"><span class="cl">    container_name: prometheus
+</span></span><span class="line"><span class="cl">    restart: always
+</span></span><span class="line"><span class="cl">    ports:
+</span></span><span class="line"><span class="cl">      - 9090:9090
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">      - prometheus-data:/prometheus
+</span></span><span class="line"><span class="cl">      - prometheus-conf:/etc/prometheus
+</span></span><span class="line"><span class="cl">      - /etc/localtime:/etc/localtime:ro
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  grafana:
+</span></span><span class="line"><span class="cl">    image: grafana/grafana:10.4.2
+</span></span><span class="line"><span class="cl">    container_name: grafana
+</span></span><span class="line"><span class="cl">    restart: always
+</span></span><span class="line"><span class="cl">    ports:
+</span></span><span class="line"><span class="cl">      - 3000:3000
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">      - grafana-data:/var/lib/grafana
+</span></span><span class="line"><span class="cl">      - /etc/localtime:/etc/localtime:ro
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">volumes:
+</span></span><span class="line"><span class="cl">  redis-data:
+</span></span><span class="line"><span class="cl">  redis-conf:
+</span></span><span class="line"><span class="cl">  mysql-conf:
+</span></span><span class="line"><span class="cl">  mysql-data:
+</span></span><span class="line"><span class="cl">  rabbit-data:
+</span></span><span class="line"><span class="cl">  rabbit-app:
+</span></span><span class="line"><span class="cl">  opensearch-data1:
+</span></span><span class="line"><span class="cl">  opensearch-data2:
+</span></span><span class="line"><span class="cl">  nacos-mysqldata:
+</span></span><span class="line"><span class="cl">  zookeeper_data:
+</span></span><span class="line"><span class="cl">  kafka-conf:
+</span></span><span class="line"><span class="cl">  kafka-data:
+</span></span><span class="line"><span class="cl">  kafkaui-app:
+</span></span><span class="line"><span class="cl">  prometheus-data:
+</span></span><span class="line"><span class="cl">  prometheus-conf:
+</span></span><span class="line"><span class="cl">  grafana-data:
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="72-启动">7.2 启动
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="c1"># 在 compose.yaml 文件所在的目录下执行</span>
+</span></span><span class="line"><span class="cl">docker compose up -d
+</span></span><span class="line"><span class="cl"><span class="c1"># 等待启动所有容器</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>tip：如果重启了服务器，可能有些容器会启动失败。再执行一遍 <code>docker compose up -d</code>即可。所有程序都可运行成功，并且不会丢失数据。请放心使用。</p>
+</blockquote>
+<h3 id="73-访问">7.3 访问
+</h3><ul>
+<li>
+<p>zookeeper可视化工具下载：</p>
+<ul>
+<li><a class="link" href="https://github.com/vran-dev/PrettyZoo/releases/download/v2.1.1/prettyZoo-win.zip"  target="_blank" rel="noopener"
+    >https://github.com/vran-dev/PrettyZoo/releases/download/v2.1.1/prettyZoo-win.zip</a></li>
+</ul>
+</li>
+<li>
+<p>redis可视化工具下载：</p>
+<ul>
+<li><a class="link" href="https://github.com/qishibo/AnotherRedisDesktopManager/releases/download/v1.6.4/Another-Redis-Desktop-Manager.1.6.4.exe"  target="_blank" rel="noopener"
+    >https://github.com/qishibo/AnotherRedisDesktopManager/releases/download/v1.6.4/Another-Redis-Desktop-Manager.1.6.4.exe</a></li>
+</ul>
+</li>
+</ul>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>组件（容器名）</th>
+          <th>介绍</th>
+          <th>访问地址</th>
+          <th>账号/密码</th>
+          <th>特性</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Redis(redis)</td>
+          <td>k-v 库</td>
+          <td>你的ip:6379</td>
+          <td>单密码模式：123456</td>
+          <td>已开启AOF</td>
+      </tr>
+      <tr>
+          <td>MySQL(mysql)</td>
+          <td>数据库</td>
+          <td>你的ip:3306</td>
+          <td>root/123456</td>
+          <td>默认utf8mb4字符集</td>
+      </tr>
+      <tr>
+          <td>Rabbit(rabbit)</td>
+          <td>消息队列</td>
+          <td>你的ip:15672</td>
+          <td>rabbit/rabbit</td>
+          <td>暴露5672和15672端口</td>
+      </tr>
+      <tr>
+          <td>OpenSearch(opensearch-node1/2)</td>
+          <td>检索引擎</td>
+          <td>你的ip:9200</td>
+          <td></td>
+          <td>内存512mb；两个节点</td>
+      </tr>
+      <tr>
+          <td>opensearch-dashboards</td>
+          <td>search可视化</td>
+          <td>你的ip:5601</td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Zookeeper(zookeeper)</td>
+          <td>分布式协调</td>
+          <td>你的ip:2181</td>
+          <td></td>
+          <td>允许匿名登录</td>
+      </tr>
+      <tr>
+          <td>kafka(kafka)</td>
+          <td>消息队列</td>
+          <td>你的ip:9092 外部访问:9094</td>
+          <td></td>
+          <td>占用内存512mb</td>
+      </tr>
+      <tr>
+          <td>kafka-ui(kafka-ui)</td>
+          <td>kafka可视化</td>
+          <td>你的ip:8080</td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>nacos(nacos)</td>
+          <td>注册/配置中心</td>
+          <td>你的ip:8848</td>
+          <td>nacos/nacos</td>
+          <td>持久化数据到MySQL</td>
+      </tr>
+      <tr>
+          <td>nacos-mysql(nacos-mysql)</td>
+          <td>nacos配套数据库</td>
+          <td>你的ip:13306</td>
+          <td>root/root</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>prometheus(prometheus)</td>
+          <td>时序数据库</td>
+          <td>你的ip:9090</td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>grafana(grafana)</td>
+          <td></td>
+          <td>你的ip:3000</td>
+          <td>admin/admin</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+  </tbody>
+</table></div>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "hugo-theme-stack" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Example Person
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
