@@ -2,11 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://cz413.github.io.com/post/</loc>
-    <lastmod>2024-11-20T00:49:34+08:00</lastmod>
-  </url><url>
     <loc>https://cz413.github.io.com/</loc>
-    <lastmod>2024-11-20T00:49:34+08:00</lastmod>
+    <lastmod>2025-01-17T16:01:43+08:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
@@ -22,6 +19,12 @@
                 hreflang="zh-cn"
                 href="https://cz413.github.io.com/"
                 />
+  </url><url>
+    <loc>https://cz413.github.io.com/post/</loc>
+    <lastmod>2025-01-17T16:01:43+08:00</lastmod>
+  </url><url>
+    <loc>https://cz413.github.io.com/p/vue3%E9%80%9F%E6%88%90%E7%AC%94%E8%AE%B0/</loc>
+    <lastmod>2025-01-17T16:01:43+08:00</lastmod>
   </url><url>
     <loc>https://cz413.github.io.com/categories/</loc>
     <xhtml:link
